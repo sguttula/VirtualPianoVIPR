@@ -24,7 +24,7 @@ public class PianoSystem {
 	 * Constructor checks if the file exists, if not then creates one
 	 */
 	public PianoSystem(){
-		
+		clickedValue=new boolean[25];
 		
 		
 		noteValue=new int[25];
