@@ -10,6 +10,7 @@ import java.util.Scanner;
 
 public class PianoSystem {
 	private File f;
+	
 	private ArrayList<Scale> scales=new ArrayList<Scale>();
 	
 	//contains the int values that correspond to the notes
@@ -96,19 +97,49 @@ public class PianoSystem {
 	 * 
 	 * 
 	 * @param val takes in a String value and returns an int corresponding to the noteValue
-	 * @return
+	 * @return integer ranging from 53 to 75 or -1 if invalid
 	 */
 	public int getNoteValue(String val){
 		for(int i=0;i<keyBoard.length;i++){
 			if(keyBoard[i].equals(val))
-				return noteValue[i];
-			
+				return noteValue[i];	
+		}
+		
+		return -1;
+		
+	}
+	/**
+	 * Goes to the list of booleans and sets the index at given value to true
+	 * 
+	 * @param val String ; the key you want to change
+	 * @param b true for clicked, false for not
+	 */
+	public void setKeyClicked(String val,boolean b){
+		for(int i=0;i<keyBoard.length;i++){
+			if(keyBoard[i].equals(val))
+				clickedValue[i]=b;	
 		}
 		
 		
-		return 60;
+	}
+	
+	/**
+	 * checks to see if the requested key is clicked
+	 * 
+	 * @param val
+	 * @param b
+	 */
+	public boolean isKeyClicked(String val){
+		for(int i=0;i<keyBoard.length;i++){
+			if(keyBoard[i].equals(val))
+				return clickedValue[i];
+		}
+		 return false;
 		
 	}
+	
+	
+	
 	/**
 	 * Generates a random melody based on a given scale
 	 * 
