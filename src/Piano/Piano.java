@@ -43,7 +43,7 @@ import javafx.stage.Stage;
 public class Piano extends Application{
 
 	BorderPane bp;
-	
+	ImageView[] keys=new ImageView[14];
 	PianoSystem s=new PianoSystem();
 	Instant pointZero,begin,end;
 
@@ -68,32 +68,57 @@ public class Piano extends Application{
 
 
 		Image tmp1=new Image(new File("keyPressed.png").toURI().toString());
+		
 		ImageView temp=new ImageView(tmp1);
-		temp.setX(10);
-		temp.setY(140);
+		temp.setX(70);
+		temp.setY(640);
 
 		Image tmp2=new Image(new File("key.png").toURI().toString());
 		ImageView temp2=new ImageView(tmp2);
-		temp2.setX(10);
-		temp2.setY(140);
+		
+		
+		Image blackKey=new Image(new File("keyBlack.png").toURI().toString());
+		ImageView bk1=new ImageView(blackKey);
+		
+		temp2.setX(70);
+		temp2.setY(640);
+		int posX=70;
+		bp=new BorderPane();
+		//ImageView[] keys=new ImageView[10];
+		
+		for(int i=0;i<14;i++){ 
+			posX+=110;
+			keys[i]=new ImageView(tmp2);
+			keys[i].setX(posX);
+			keys[i].setY(640);
+			bp.getChildren().add(keys[i]);
+		}
+		bk1.setX(155);
+		bk1.setY(640);
+		bp.getChildren().add(temp);
+		bp.getChildren().add(temp2);
+		bp.getChildren().add(bk1);
+		
+		
 
 
 
 		//bp.getChildren().add(l);
 		//gp.add(key, 2, 2);
-		bp=new BorderPane();
+	
 		HBox area=new HBox();
 		Button key=new Button("KEY");
 		Button save=new Button("SAVE");
 		key.setMinSize(200, 100);
 		save.setMinSize(200, 100);
+		
+		
 		area.getChildren().add(key);
 		area.getChildren().add(save);
 		//key.setLayoutX(300);
 		bp.setTop(area);
 		//bp.getChildren().add(key);
-		bp.getChildren().add(temp);
-		bp.getChildren().add(temp2);
+		
 
 		Sequencer player=MidiSystem.getSequencer();
 
@@ -142,6 +167,7 @@ public class Piano extends Application{
 				if(event.getCode()==KeyCode.DIGIT1&&!s.isKeyClicked("ONE")){
 					mChannels[0].noteOn(s.getNoteValue("ONE"), 100);
 					s.setKeyClicked("ONE",true);
+					keys[1].setOpacity(0.2);
 				}
 				if(event.getCode()==KeyCode.Q&&!s.isKeyClicked("Q")){
 					mChannels[0].noteOn(s.getNoteValue("Q"), 100);
@@ -237,7 +263,8 @@ public class Piano extends Application{
 				if(event.getCode()==KeyCode.DIGIT1){
 					mChannels[0].noteOn(s.getNoteValue("ONE"),0);
 					s.setKeyClicked("ONE",false);
-					temp2.setOpacity(1);
+					
+					keys[1].setOpacity(1);
 				}
 				if(event.getCode()==KeyCode.Q){
 					mChannels[0].noteOn(s.getNoteValue("Q"), 0);
