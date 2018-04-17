@@ -2,7 +2,11 @@ package Piano;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.ArrayList;
 
 import javax.sound.midi.Instrument;
 import javax.sound.midi.MidiChannel;
@@ -14,6 +18,10 @@ import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Synthesizer;
 import javax.sound.midi.Track;
 
+import com.leff.midi.MidiFile;
+import com.leff.midi.MidiTrack;
+import com.leff.midi.event.meta.Tempo;
+import com.leff.midi.event.meta.TimeSignature;
 import com.sun.javafx.geom.Rectangle;
 
 import javafx.application.Application;
@@ -33,10 +41,15 @@ import javafx.scene.layout.HBox;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 public class Piano extends Application{
-	Boolean click=true;
+
 	BorderPane bp;
-	int move=5;
+	ImageView[] keys=new ImageView[14];
 	PianoSystem s=new PianoSystem();
+	Instant pointZero,begin,end;
+
+	MidiTrack tempoTrack = new MidiTrack();
+	MidiTrack noteTrack = new MidiTrack();
+
 	//int[] melody=generateMelody();
 	public static void main(String[] args) {
 		launch(args);
@@ -45,48 +58,85 @@ public class Piano extends Application{
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		// TODO Auto-generated method stub
-		
-		s.update();
 
+		s.update();
 		
-		
-		
-		
-		
-		
+
+
+
+
+
+
 		Image tmp1=new Image(new File("keyPressed.png").toURI().toString());
+		
 		ImageView temp=new ImageView(tmp1);
-		temp.setX(10+move);
-		temp.setY(10);
+		temp.setX(70);
+		temp.setY(640);
 
 		Image tmp2=new Image(new File("key.png").toURI().toString());
 		ImageView temp2=new ImageView(tmp2);
-		temp2.setX(10);
-		temp2.setY(10);
-		temp2.getStyleClass().add("key");
+		
+		
+		Image blackKey=new Image(new File("keyBlack.png").toURI().toString());
+		ImageView bk1=new ImageView(blackKey);
+		
+		temp2.setX(70);
+		temp2.setY(640);
+		int posX=70;
+		bp=new BorderPane();
+		//ImageView[] keys=new ImageView[10];
+		
+		for(int i=0;i<14;i++){ 
+			posX+=110;
+			keys[i]=new ImageView(tmp2);
+			keys[i].setX(posX);
+			keys[i].setY(640);
+			bp.getChildren().add(keys[i]);
+		}
+		bk1.setX(155);
+		bk1.setY(640);
+		bp.getChildren().add(temp);
+		bp.getChildren().add(temp2);
+		bp.getChildren().add(bk1);
+		
+		
 
-		System.out.println(temp2.getStyle());
+
 
 		//bp.getChildren().add(l);
 		//gp.add(key, 2, 2);
-		bp=new BorderPane();
-		bp.getChildren().add(temp);
-		bp.getChildren().add(temp2);
+	
+		HBox area=new HBox();
+		Button key=new Button("KEY");
+		Button save=new Button("SAVE");
+		key.setMinSize(200, 100);
+		save.setMinSize(200, 100);
+		
+		
+		area.getChildren().add(key);
+		area.getChildren().add(save);
+		//key.setLayoutX(300);
+		bp.setTop(area);
+		//bp.getChildren().add(key);
+		
 
 		Sequencer player=MidiSystem.getSequencer();
+
 		player.open();
-		Sequence sequence=new Sequence(Sequence.PPQ,4);
-	
-//		InputStream is=new BufferedInputStream(new FileInputStream(new File("GHOST.mid")));
-//		sequencer.setSequence(is);
-		 Track track = sequence.createTrack();
-//		track.add(noteOn);
-//		track.add(noteOff);
-		player.setSequence(sequence);
+		InputStream is = new BufferedInputStream(new FileInputStream(new File("HappyBirthday.mid")));
+		//		InputStream is=new BufferedInputStream(new FileInputStream(new File("GHOST.mid")));
+		//		sequencer.setSequence(is);
+
+		//		track.add(noteOn);
+		//		track.add(noteOff);
+		player.setSequence(is);
+
+		player.setTickPosition(0);
 		//sequencer.setTrackSolo(2, true);
 		//sequencer.start();
-		
+
 		Synthesizer midiSynth = MidiSystem.getSynthesizer(); 
+
 		midiSynth.open();
 		Instrument[] instr = midiSynth.getDefaultSoundbank().getInstruments();
 		MidiChannel[] mChannels = midiSynth.getChannels();
@@ -94,9 +144,8 @@ public class Piano extends Application{
 		midiSynth.loadInstrument(instr[0]);//load an instrument
 		GridPane gp=new GridPane();
 
-		Button key=new Button("KEY");
-		key.setMinSize(100, 200);
-		player.start();
+
+
 
 
 		EventHandler evPress =new EventHandler<KeyEvent>() {
@@ -104,76 +153,158 @@ public class Piano extends Application{
 			@Override
 			public void handle(final KeyEvent event) {
 
-				if(event.getCode()==KeyCode.TAB&&click){
+				if(event.getCode()==KeyCode.TAB&&!s.isKeyClicked("TAB")){
 					mChannels[0].noteOn(s.getNoteValue("TAB"), 100);
-					
-					click=false;
-					
+
+					s.setKeyClicked("TAB",true);
+					System.out.println("TAB");
 					temp2.setOpacity(0.2);
 					
-				}
-				if(event.getCode()==KeyCode.DIGIT1)
-					mChannels[0].noteOn(s.getNoteValue("1"), 100);
-				if(event.getCode()==KeyCode.Q)
-					mChannels[0].noteOn(s.getNoteValue("Q"), 100);
-				if(event.getCode()==KeyCode.DIGIT2)
-					mChannels[0].noteOn(s.getNoteValue("2"), 100);
-				key.setText("PRESSED");
-				
 
-				
+
+
+				}
+				if(event.getCode()==KeyCode.DIGIT1&&!s.isKeyClicked("ONE")){
+					mChannels[0].noteOn(s.getNoteValue("ONE"), 100);
+					s.setKeyClicked("ONE",true);
+					keys[1].setOpacity(0.2);
+				}
+				if(event.getCode()==KeyCode.Q&&!s.isKeyClicked("Q")){
+					mChannels[0].noteOn(s.getNoteValue("Q"), 100);
+					s.setKeyClicked("Q", true);
+				}
+				if(event.getCode()==KeyCode.DIGIT2&&!s.isKeyClicked("TWO")){
+					mChannels[0].noteOn(s.getNoteValue("TWO"), 100);
+					s.setKeyClicked("TWO", true);
+					System.out.println("TWO");
+				}
+
+
+				if(event.getCode()==KeyCode.BACK_SPACE&&!s.isKeyClicked("BACKSPACE")){
+					mChannels[0].noteOn(s.getNoteValue("BACKSPACE"), 100);
+					s.setKeyClicked("BACKSPACE", true);
+					System.out.println("BACK");
+				}
+
 
 			}
 
 		};
 
 		EventHandler mousePress =new EventHandler() {
+			boolean play=false;
+			long pos=0;
 			@Override
 			public void handle(Event event) {
 				//	mChannels[0].noteOn(53, 100);
-				click=false;
-				System.out.println("CaT PRESSED");
-			}
+				if(play){
+					play=false;
+					pos=player.getTickPosition();
+					player.stop();
+					key.setText("Pause");
 
-		};
 
-		EventHandler mousePress2 =new EventHandler() {
-			@Override
-			public void handle(Event event) {
-				System.out.println("KEYPRESSED");
-				
-			}
+				}else{
+					key.setText("Play");
+					play=true;
+					player.setTickPosition(pos);
+					player.start();
 
-		};
 
-		
-		EventHandler evRelease =new EventHandler<KeyEvent>() {
-
-			@Override
-			public void handle(final KeyEvent event) {
-
-				if(event.getCode()==KeyCode.TAB){
-					mChannels[0].noteOff(s.getNoteValue("TAB"), 100);
-					click=true;
-					temp2.setOpacity(1);
 				}
 
 			}
 
 		};
 
-		
+		EventHandler mousePress2 =new EventHandler() {
+
+
+
+			@Override
+			public void handle(Event event) {
+				//	mChannels[0].noteOn(53, 100);
+				if(s.isRecording()){
+					s.setRecording(false);
+					System.out.println("STOPPED");
+					save.setText("Stopped");
+					
+					s.renderRecording();
+
+
+				}else{
+					save.setText("Recording");
+					System.out.println("RECORDING");
+					
+					s.setRecording(true);
+					
+
+				}
+
+			}
+
+		};
+
+
+		EventHandler evRelease =new EventHandler<KeyEvent>() {
+
+			@Override
+			public void handle(final KeyEvent event) {
+
+				if(event.getCode()==KeyCode.TAB){
+					mChannels[0].noteOn(s.getNoteValue("TAB"), 0);
+
+					s.setKeyClicked("TAB",false);
+					temp2.setOpacity(1);
+					
+
+
+				}
+				if(event.getCode()==KeyCode.DIGIT1){
+					mChannels[0].noteOn(s.getNoteValue("ONE"),0);
+					s.setKeyClicked("ONE",false);
+					
+					keys[1].setOpacity(1);
+				}
+				if(event.getCode()==KeyCode.Q){
+					mChannels[0].noteOn(s.getNoteValue("Q"), 0);
+					s.setKeyClicked("Q",false);
+					temp2.setOpacity(1);
+				}
+				if(event.getCode()==KeyCode.DIGIT2){
+					mChannels[0].noteOn(s.getNoteValue("TWO"), 0);
+					s.setKeyClicked("TWO",false);
+					temp2.setOpacity(1);
+				}
+				if(event.getCode()==KeyCode.BACK_SPACE){
+					mChannels[0].noteOn(s.getNoteValue("BACKSPACE"), 0);
+					s.setKeyClicked("BACKSPACE",false);
+					temp2.setOpacity(1);
+				}
+
+
+
+
+
+
+
+
+			}
+
+		};
+
+
 		Scene scene=new Scene(bp,900,900);
 		scene.getStylesheets().add("style.css");
 		scene.setOnKeyPressed(evPress);
 		scene.setOnKeyReleased(evRelease);
-		temp.setOnMouseClicked(mousePress);
-		temp2.setOnMouseClicked(mousePress2);
+		key.setOnMouseClicked(mousePress);
+		save.setOnMouseClicked(mousePress2);
 		// scene.setOnKeyTyped(ev);
 		primaryStage.setScene(scene);
 		primaryStage.show();
 	}
-	
+
 
 
 

@@ -15,8 +15,9 @@
 !*.md
 !*.jpg
 !key.png
+!keyBlack.png
 !keyPressed.png
-
+!HappyBirthday.mid
 
 # MAC HIDDEN FILES
 .DS_Store
