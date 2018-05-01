@@ -8,6 +8,7 @@ import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -46,7 +47,7 @@ public class PianoSystem {
 		ts.setTimeSignature(4, 4, TimeSignature.DEFAULT_METER, TimeSignature.DEFAULT_DIVISION);
 
 		Tempo t = new Tempo();
-		t.setBpm(125);
+		t.setBpm(120);
 
 		tempoTrack.insertEvent(ts);
 		tempoTrack.insertEvent(t);
@@ -259,10 +260,12 @@ public class PianoSystem {
 		tracks.add(tempoTrack);
 		tracks.add(noteTrack);
 
-		MidiFile midi = new MidiFile(MidiFile.DEFAULT_RESOLUTION, tracks);
+		MidiFile midi = new MidiFile(960, tracks);
 
 		// 4. Write the MIDI data to a file
-		File output = new File("testWrite.mid");
+		
+		int date=LocalDateTime.now().getSecond();
+		File output = new File(date+"testWrite.mid");
 		try
 		{
 			midi.writeToFile(output);
