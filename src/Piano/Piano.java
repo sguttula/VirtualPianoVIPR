@@ -76,9 +76,6 @@ public class Piano extends Application{
 		launch(args);
 	}
 
-	/*
-	 * draws keys on screen
-	 */
 	public void setupKeys(){
 
 		int posX=70;
@@ -105,10 +102,6 @@ public class Piano extends Application{
 		setupBlackKeys();
 	}
 
-	/**
-	 * A method for setting black keys since they are not linear
-	 * 
-	 */
 	public void setupBlackKeys(){
 		blackkeys[0]=new ImageView(blackKey);
 		blackkeys[0].setX(150);
@@ -174,9 +167,6 @@ public class Piano extends Application{
 		bp.getChildren().add(blackkeys[9]);
 	}
 
-	/*
-	 * 
-	 */
 	public void addNotes(){
 		for(int i=0;i<rectangles.size();i++){
 			notes.add(new ImageView(blackKey));
@@ -237,17 +227,12 @@ public class Piano extends Application{
 
 
 			notes.get(i).setY(rectangles.get(i).y);
-			//			notes.get(i).setScaleX(rectangles.get(i).width/900.0);
-			//set y scale sets the length of the drawing, .2 is less accurate lengths but more accurate spacings
 			notes.get(i).setScaleY(rectangles.get(i).height/234.0);
 			bp.getChildren().add(notes.get(i));
 		}
 
 	}
 
-	/**
-	 * Removes the old notes from border pane when loading new files
-	 */
 	public void removeNotes(){
 		for(int i=0;i<notes.size();i++){
 			bp.getChildren().remove(notes.get(i));
@@ -259,9 +244,6 @@ public class Piano extends Application{
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		// TODO Auto-generated method stub
-		//primaryStage.setOnCloseRequest(e -> Platform.exit());
-
 
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			@Override
@@ -274,12 +256,6 @@ public class Piano extends Application{
 
 
 		s.update();
-		//loads a midi file and starts converting to rectangle []
-		//basically like recursion
-		//	Sequence sequence = MidiSystem.getSequence(new File("mary.mid"));
-
-
-		//rectangles=toRectangle(sequence.getTracks()[1]);
 		System.out.println(rectangles.size());
 		System.out.println(notes.size());
 
@@ -291,17 +267,12 @@ public class Piano extends Application{
 
 		setupKeys();
 
-		//black bar where the notes start playing
 		ImageView b=new ImageView(blackKey);
 		b.setX(0);
 		b.setY(520);
 		b.setScaleX(80);
 		b.setScaleY(0.1);
 		bp.getChildren().add(b);
-
-		//adds the converted notes to the screen
-
-
 
 		ImageView keyOverLay=new ImageView(overLay);
 		keyOverLay.setX(25);
