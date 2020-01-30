@@ -29,6 +29,4 @@ public class Scale implements Serializable{
 		}
 		return temp;
 	}
-	
-	
 }
