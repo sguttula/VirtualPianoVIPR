@@ -36,23 +36,20 @@ public class ReadTest extends Application {
 	private BorderPane bp;
 	BorderPane sp=new BorderPane();
 
-	//public static final String[] NOTE_NAMES = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
 	ArrayList<Rectangle> rectanglesOG=new ArrayList<Rectangle>();
 	ArrayList<Rectangle> rectanglesUser=new ArrayList<Rectangle>();
 	ArrayList<ImageView> notesOG=new ArrayList<ImageView>();
 	ArrayList<ImageView> notesUser=new ArrayList<ImageView>();
+	
 	public static void main(String[] args) throws Exception {
 
 		launch(args);
 	}
-	/**
-	 * 
-	 */
+	
 	public void comparetracks(){
 
 		for(int i=0;i<notesOG.size();i++){
 			for(int j=0;j<notesUser.size();j++){
-				//	overlaps should check if two rectangles overlap
 				if(notesOG.get(i).getBoundsInParent().intersects(notesUser.get(j).getBoundsInParent())){
 					//correct hit
 					System.out.println("Good Hit"+i);
